@@ -1,0 +1,178 @@
+
+<!-- |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/|
+
+    JavaScript/HTML5 hello world-style example for displaying text and shapes
+
+    HTML document (web page) that displays some text and rectangular shapes
+
+    @author ohseejay / https://github.com/ohseejay / https://bitbucket.org/ohseejay
+
+    Chad Jenkins
+    Laboratory for Perception RObotics and Grounded REasoning Systems
+    University of Michigan
+
+    License: Creative Commons 3.0 BY-SA
+
+|\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| -->
+
+<html>  <!-- html tag marking the start of the HTML document -->
+<body>  <!-- body tag marking the start of the body of the document -->
+
+<!--
+
+    this is a comment in HTML.  text within comment markers is ignored.
+
+    this HTML document (web page) displays an animation of a falling circle
+
+    this document is comprised of various text and HTML elements for:
+      "draw_canvas" for drawing
+      an unnamed script element containing JavaScript code to be executed
+
+    if you run into problems, do not forget to open the browser console.
+
+-->
+
+<!-- say your name big as a section header -->
+<h1>Triangle Collision Test</h1>
+
+
+
+<!-- start a new paragraph -->
+<p>
+
+</p>
+
+<canvas id="myCanvas" width="400" height="400"></canvas>
+
+<p id="test"></p>
+
+<script src="kineval/kineval_matrix.js"></script>
+
+<!-- script element contains JavaScript code to draw shapes -->
+<script>
+
+var canvas = document.getElementById("myCanvas");
+
+// get a reference to a 2D drawing context for the "myCanvas" canvas
+var ctx = canvas.getContext("2d");
+init()
+
+
+
+function init() {
+
+  // draw a border on the canvas
+  ctx.fillRect(0,0,20,400);
+  ctx.fillRect(0,0,400,20);
+  ctx.fillRect(0,380,400,20);
+  ctx.fillRect(380,0,20,400);
+
+  //define 2 two triangles
+  tri1 = {a:[],b:[],c:[]}
+  tri1.a[0] = 50
+  tri1.a[1] = 70
+  tri1.b[0] = 150
+  tri1.b[1] = 300
+  tri1.c[0] = 200
+  tri1.c[1] = 200
+
+  tri2 = {a:[],b:[],c:[]}
+  tri2.a[0] = 100
+  tri2.a[1] = 50
+  tri2.b[0] = 300
+  tri2.b[1] = 300
+  tri2.c[0] = 350         //130
+  tri2.c[1] = 20          //250
+
+    // function call to start the animation loop
+    animate();
+}
+
+// definition of the animation function containing the animation loop.
+//   this function repeatedly called to update the animation and draw results
+function animate() {
+
+    // the requestAnimationFrame function requests that the animate function
+    //   be called again in the near future
+    requestAnimationFrame(animate);
+
+    // function call to update the state of the animation
+    update();
+
+}
+
+// definition of the update function to advance animation state forward in time
+function update() {
+
+
+
+
+
+ctx.lineWidth = 3;
+ctx.beginPath();
+ctx.moveTo(tri1.a[0],tri1.a[1]);
+ctx.lineTo(tri1.b[0],tri1.b[1]);
+ctx.lineTo(tri1.c[0],tri1.c[1]);
+ctx.lineTo(tri1.a[0],tri1.a[1]);
+ctx.stroke();
+
+ctx.lineWidth = 3;
+ctx.beginPath();
+ctx.moveTo(tri2.a[0],tri2.a[1]);
+ctx.lineTo(tri2.b[0],tri2.b[1]);
+ctx.lineTo(tri2.c[0],tri2.c[1]);
+ctx.lineTo(tri2.a[0],tri2.a[1]);
+ctx.stroke();
+
+
+
+
+
+//Display 2D collision
+document.getElementById("test").innerHTML ="Triangles in Collision: " + triangle_collision(tri1,tri2);
+
+}
+
+
+
+
+
+//2d detection
+function same_side(p1,p2,a,b){
+    var side = vector_subtraction_ndim(b,a)
+    side.push(0)
+    var test_point = vector_subtraction_ndim(p1,a)
+    test_point.push(0)
+    var int_point = vector_subtraction_ndim(p2,a)
+    int_point.push(0)
+    var cp1 = vector_cross(side, test_point)
+    var cp2 = vector_cross(side, int_point)
+    if ( vector_dot(cp1, cp2) >= 0) {return true}
+    else {return false}
+  }
+
+// points are [x,y]
+function interior_point_check(p,triangle){
+  var a = triangle.a;
+  var b = triangle.b;
+  var c = triangle.c;
+    if (same_side(p,a, b,c) && same_side(p,b, a,c)
+    && same_side(p,c, a,b) ) { return true}
+    else {return false}
+}
+
+
+function triangle_collision(triangle1,triangle2){
+  for ( var point in triangle1){
+    if (interior_point_check(triangle1[point],triangle2)){ return true}
+  }
+  for (var point in triangle2){
+    if (interior_point_check(triangle2[point],triangle1)) { return true}
+  }
+  return false
+}
+
+</script>
+
+</body>
+</html>
